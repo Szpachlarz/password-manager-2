@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace PasswordManager2.Views
 {
     /// <summary>
-    /// Interaction logic for ShellView.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class ShellView : UserControl
+    public partial class MainWindow : Window
     {
-        public ShellView()
+        public MainWindow()
         {
             InitializeComponent();
         }

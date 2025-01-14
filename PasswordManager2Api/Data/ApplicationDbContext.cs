@@ -1,12 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PasswordManager2Api.Models;
 
 namespace PasswordManager2Api.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<Account>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions)
-                : base(dbContextOptions)
+        public ApplicationDbContext(DbContextOptions dbContextOptions)
+        : base(dbContextOptions)
         {
 
         }

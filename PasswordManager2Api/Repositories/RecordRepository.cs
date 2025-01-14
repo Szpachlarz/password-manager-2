@@ -39,7 +39,7 @@ namespace PasswordManager2Api.Repositories
             return await _context.Records.FirstOrDefaultAsync(i => i.Id == id);
         }
 
-        public async Task<List<Record>> GetUserRecords(int userId)
+        public async Task<List<Record>> GetUserRecords(string userId)
         {
             return await _context.Records.Where(i => i.AccountId == userId).ToListAsync();
         }

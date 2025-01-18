@@ -7,6 +7,7 @@ using System.Security.Claims;
 using PasswordManager2Api.Interfaces;
 using PasswordManager2Api.Data;
 using Microsoft.AspNetCore.Identity.Data;
+using PasswordManager2Api.Models;
 
 namespace PasswordManager2Api.Controllers
 {
@@ -61,20 +62,16 @@ namespace PasswordManager2Api.Controllers
             return Ok(new { message = "Logout successful" });
         }
 
+
+        //need to be fixed
         [Authorize]
         [HttpGet("me")]
         public IActionResult Me()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var userId = Account.FindFirstValue(ClaimTypes.NameIdentifier)?.Value;
             var username = User.Identity?.Name;
 
-            return Ok(new { userId, username });
-        }
-
-        [HttpGet("access-denied")]
-        public IActionResult AccessDenied()
-        {
-            return Forbid();
+            return Ok(new { username });
         }
     }
 }

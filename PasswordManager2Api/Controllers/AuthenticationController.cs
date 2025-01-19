@@ -8,6 +8,7 @@ using PasswordManager2Api.Interfaces;
 using PasswordManager2Api.Data;
 using Microsoft.AspNetCore.Identity.Data;
 using PasswordManager2Api.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace PasswordManager2Api.Controllers
 {
@@ -33,12 +34,18 @@ namespace PasswordManager2Api.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, request.Username)
+                new Claim(ClaimTypes.Name, request.Username),
+                new Claim(ClaimTypes.NameIdentifier, request.Username)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+            };
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return Ok(new { message = "Login successful" });
         }
@@ -62,15 +69,14 @@ namespace PasswordManager2Api.Controllers
             return Ok(new { message = "Logout successful" });
         }
 
-
-        //need to be fixed
-        [Authorize]
         [HttpGet("me")]
         public IActionResult Me()
         {
-            //var userId = Account.FindFirstValue(ClaimTypes.NameIdentifier)?.Value;
-            var username = User.Identity?.Name;
-
+            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return Unauthorized(new { message = "User not found or not authenticated" });
+            }
+            var username = User.Identity.Name;
             return Ok(new { username });
         }
     }

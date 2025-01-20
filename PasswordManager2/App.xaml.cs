@@ -1,4 +1,6 @@
-﻿using PasswordManager2.ViewModels;
+﻿using PasswordManager2.Interfaces;
+using PasswordManager2.Services;
+using PasswordManager2.ViewModels;
 using PasswordManager2.Views;
 using Prism.Ioc;
 using Prism.Mvvm;
@@ -24,6 +26,8 @@ namespace PasswordManager2
             containerRegistry.RegisterForNavigation<HomeView, HomeViewModel>();
             containerRegistry.RegisterForNavigation<LoginView, LoginViewModel>();
             containerRegistry.RegisterForNavigation<RegisterView, RegisterViewModel>();
+
+            containerRegistry.RegisterSingleton<IAuthService, AuthService>();
         }
 
         protected override void OnInitialized()

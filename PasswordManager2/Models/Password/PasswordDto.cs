@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PasswordManager2.Models.Password
 {
-    internal class PasswordDto
+    public class PasswordDto
     {
         public int Id { get; set; }
         public string Title { get; set; }

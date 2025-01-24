@@ -6,6 +6,7 @@ using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Unity;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace PasswordManager2
 {
@@ -28,6 +29,7 @@ namespace PasswordManager2
             containerRegistry.RegisterForNavigation<RegisterView, RegisterViewModel>();
 
             containerRegistry.RegisterSingleton<IAuthService, AuthService>();
+            containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
         }
 
         protected override void OnInitialized()

@@ -7,6 +7,64 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="White">
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+            <TextBlock Text="Welcome, " />
+            <TextBlock Text="{Binding CurrentUsername}" FontWeight="Bold"/>
+            <Button Command="{Binding LogoutCommand}" 
+                    Content="Logout" 
+                    Margin="20,0,0,0"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" 
+                   Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   Margin="10"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Passwords}"
+                  SelectedItem="{Binding SelectedPassword}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Margin="10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title}"/>
+                <DataGridTextColumn Header="Username" Binding="{Binding Username}"/>
+                <DataGridTextColumn Header="Website" Binding="{Binding Website}"/>
+                <DataGridTextColumn Header="Last Modified" Binding="{Binding LastModified, StringFormat={}{0:g}}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal" 
+                    Margin="10">
+            <Button Command="{Binding AddPasswordCommand}"
+                    Content="Add Password"
+                    Margin="0,0,10,0"/>
+            <Button Command="{Binding EditPasswordCommand}"
+                    Content="Edit Password"
+                    Margin="0,0,10,0"/>
+            <Button Command="{Binding DeletePasswordCommand}"
+                    Content="Delete Password"
+                    Margin="0,0,10,0"/>
+            <Button Command="{Binding RefreshCommand}"
+                    Content="Refresh"/>
+        </StackPanel>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="4" 
+              Background="#80000000"
+              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ProgressBar IsIndeterminate="True" 
+                        Width="100" 
+                        Height="20"/>
+        </Grid>
     </Grid>
 </UserControl>

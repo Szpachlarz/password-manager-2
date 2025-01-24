@@ -5,5 +5,13 @@
     xmlns:local="clr-namespace:PasswordManager2"
     xmlns:prism="http://prismlibrary.com/">
     <Application.Resources>
+        <Style x:Key="ValidatedTextBox" TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="Background" Value="LightPink"/>
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </prism:PrismApplication>

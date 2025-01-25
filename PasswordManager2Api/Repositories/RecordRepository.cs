@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PasswordManager2Api.Data;
+using PasswordManager2Api.Dtos;
 using PasswordManager2Api.Interfaces;
 using PasswordManager2Api.Models;
 
@@ -13,18 +14,28 @@ namespace PasswordManager2Api.Repositories
             _context = context;
         }
 
-        public async Task<Record> Create(Record record)
+        public async Task<Record> Create(string userId, RecordDto recordDto)
         {
+            var record = new Record
+            {
+                AccountId = userId,
+                ServiceName = recordDto.ServiceName,
+                Password = recordDto.Password,
+                IV = recordDto.IV,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
             await _context.Records.AddAsync(record);
             await _context.SaveChangesAsync();
             return record;
         }
 
-        public async Task<Record?> Delete(int id)
+        public async Task<Record?> Delete(int id, string userId)
         {
             var record = await _context.Records.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (record == null)
+            if (record == null || record.AccountId != userId)
             {
                 return null;
             }
@@ -44,18 +55,18 @@ namespace PasswordManager2Api.Repositories
             return await _context.Records.Where(i => i.AccountId == userId).ToListAsync();
         }
 
-        public async Task<Record> Update(int id, Record record)
+        public async Task<Record> Update(int id, string userId, RecordDto recordDto)
         {
             var existingRecord = await _context.Records.FirstOrDefaultAsync(i => i.Id == id);
-            if (existingRecord == null)
+            if (existingRecord == null || existingRecord.AccountId != userId)
             {
                 return null;
             }
 
-            existingRecord.ServiceName = record.ServiceName;
-            existingRecord.Password = record.Password;
-            existingRecord.IV = record.IV;
-            existingRecord.UpdatedAt = record.UpdatedAt;
+            existingRecord.ServiceName = recordDto.ServiceName;
+            existingRecord.Password = recordDto.Password;
+            existingRecord.IV = recordDto.IV;
+            existingRecord.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             return existingRecord;

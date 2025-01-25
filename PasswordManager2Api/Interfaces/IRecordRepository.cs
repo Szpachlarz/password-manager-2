@@ -1,4 +1,5 @@
-﻿using PasswordManager2Api.Models;
+﻿using PasswordManager2Api.Dtos;
+using PasswordManager2Api.Models;
 
 namespace PasswordManager2Api.Interfaces
 {
@@ -6,8 +7,8 @@ namespace PasswordManager2Api.Interfaces
     {
         Task<List<Record>> GetUserRecords(string userId);
         Task<Record> GetRecordById(int id);
-        Task<Record> Create(Record record);
-        Task<Record> Update(int id, Record record);
-        Task<Record?> Delete(int id);
+        Task<Record> Create(string userId, RecordDto recordDto);
+        Task<Record> Update(int id, string userId, RecordDto recordDto);
+        Task<Record?> Delete(int id, string userId);
     }
 }

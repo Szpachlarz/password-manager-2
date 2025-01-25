@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PasswordManager2Api.Dtos;
 using PasswordManager2Api.Interfaces;
 using PasswordManager2Api.Models;
+using System.Security.Claims;
 
 namespace PasswordManager2Api.Controllers
 {
@@ -40,30 +43,29 @@ namespace PasswordManager2Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Record record)
+        public async Task<IActionResult> Create([FromBody] RecordDto recordDto)
         {
-            if (record == null)
-            {
-                return BadRequest("Record is null.");
-            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var createdRecord = await _recordRepository.Create(record);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var createdRecord = await _recordRepository.Create(userId, recordDto);
             return CreatedAtAction(nameof(GetRecordById), new { id = createdRecord.Id }, createdRecord);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Record record)
+        public async Task<IActionResult> Update(int id, [FromBody] RecordDto recordDto)
         {
-            if (record == null || id != record.Id)
-            {
-                return BadRequest("Invalid record data.");
-            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var updatedRecord = await _recordRepository.Update(id, record);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existingRecord = await _recordRepository.GetRecordById(id);
+
+            var updatedRecord = await _recordRepository.Update(id, userId, recordDto);
             if (updatedRecord == null)
-            {
                 return NotFound();
-            }
 
             return Ok(updatedRecord);
         }

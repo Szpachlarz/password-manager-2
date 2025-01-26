@@ -7,27 +7,41 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using PasswordManager2.Helpers;
 
 namespace PasswordManager2.Services
 {
     internal class PasswordService : IPasswordService
     {
         private readonly HttpClient _httpClient;
+        private readonly string _encryptionKey;
+        private readonly AesEncryptionHelper _aesHelper;
 
-        public PasswordService(HttpClient httpClient)
+        public PasswordService(HttpClient httpClient, string encryptionKey, AesEncryptionHelper aesHelper)
         {
             _httpClient = httpClient;
+            _encryptionKey = encryptionKey;
+            _aesHelper = aesHelper;
         }
 
         public async Task<List<PasswordDto>> GetPasswordsAsync()
         {
             try
             {
-                var response = await _httpClient.GetAsync("api/passwords");
+                var id = await _httpClient.GetAsync("api/Authentication/me");
+                var response = await _httpClient.GetAsync("api/Record/user" + id);
                 response.EnsureSuccessStatusCode();
 
-                var passwords = await response.Content.ReadFromJsonAsync<List<PasswordDto>>();
-                return passwords ?? new List<PasswordDto>();
+                var encryptedPasswords = await response.Content.ReadFromJsonAsync<List<PasswordDto>>();
+                if (encryptedPasswords == null) return new List<PasswordDto>();
+
+                foreach (var password in encryptedPasswords)
+                {
+                    password.Password = _aesHelper.Decrypt(password.Password, password.IV);
+                }
+
+                return encryptedPasswords;
             }
             catch (Exception ex)
             {
@@ -39,7 +53,7 @@ namespace PasswordManager2.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/passwords/{id}");
+                var response = await _httpClient.GetAsync($"api/Record/{id}");
                 response.EnsureSuccessStatusCode();
 
                 var password = await response.Content.ReadFromJsonAsync<PasswordDto>();
@@ -55,7 +69,11 @@ namespace PasswordManager2.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/passwords", password);
+                var (encryptedPassword, iv) = _aesHelper.Encrypt(password.Password);
+                password.Password = encryptedPassword;
+                password.IV = iv;
+
+                var response = await _httpClient.PostAsJsonAsync("api/Record", password);
                 response.EnsureSuccessStatusCode();
 
                 var createdPassword = await response.Content.ReadFromJsonAsync<PasswordDto>();
@@ -71,7 +89,7 @@ namespace PasswordManager2.Services
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/passwords/{password.Id}", password);
+                var response = await _httpClient.PutAsJsonAsync($"api/Record/{password.Id}", password);
                 response.EnsureSuccessStatusCode();
 
                 var updatedPassword = await response.Content.ReadFromJsonAsync<PasswordDto>();
@@ -87,7 +105,7 @@ namespace PasswordManager2.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"api/passwords/{id}");
+                var response = await _httpClient.DeleteAsync($"api/Record/{id}");
                 response.EnsureSuccessStatusCode();
                 return true;
             }

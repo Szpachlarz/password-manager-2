@@ -73,7 +73,9 @@ namespace PasswordManager2Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deletedRecord = await _recordRepository.Delete(id);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var deletedRecord = await _recordRepository.Delete(id, userId);
             if (deletedRecord == null)
             {
                 return NotFound();

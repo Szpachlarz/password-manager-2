@@ -79,14 +79,15 @@ namespace PasswordManager2Api.Controllers
         }
 
         [HttpGet("me")]
-        public IActionResult Me()
+        public async Task<IActionResult> Me()
         {
             if (User?.Identity == null || !User.Identity.IsAuthenticated)
             {
                 return Unauthorized(new { message = "User not found or not authenticated" });
             }
             var username = User.Identity.Name;
-            return Ok(new { username });
+            var user = await _accountRepository.GetByIdAsync(username);
+            return Ok(new { username = username, id = user.Id });
         }
     }
 }

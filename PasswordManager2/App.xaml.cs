@@ -27,6 +27,9 @@ namespace PasswordManager2
             containerRegistry.RegisterForNavigation<HomeView, HomeViewModel>();
             containerRegistry.RegisterForNavigation<LoginView, LoginViewModel>();
             containerRegistry.RegisterForNavigation<RegisterView, RegisterViewModel>();
+            //containerRegistry.RegisterForNavigation<HomeView>("Home");
+            //containerRegistry.RegisterForNavigation<LoginView>("Login");
+            //containerRegistry.RegisterForNavigation<RegisterView>("Register");
 
             containerRegistry.RegisterSingleton<IAuthService, AuthService>();
             containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
@@ -35,8 +38,11 @@ namespace PasswordManager2
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            var regionManager = Container.Resolve<IRegionManager>();
-            regionManager.RequestNavigate("MainRegion", "HomeView");
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var regionManager = Container.Resolve<IRegionManager>();
+                regionManager.RequestNavigate("MainRegion", "HomeView");
+            });
         }
     }
 }

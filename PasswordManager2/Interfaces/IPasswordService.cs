@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace PasswordManager2.Interfaces
 {
-    internal interface IPasswordService
+    public interface IPasswordService
     {
         Task<List<PasswordDto>> GetPasswordsAsync();
         Task<PasswordDto> GetPasswordByIdAsync(int id);
-        Task<PasswordDto> AddPasswordAsync(PasswordDto password);
-        Task<PasswordDto> UpdatePasswordAsync(PasswordDto password);
+        Task<PasswordDto> AddPasswordAsync(CreatePasswordDto password);
+        Task<PasswordDto> UpdatePasswordAsync(int id, CreatePasswordDto password);
         Task<bool> DeletePasswordAsync(int id);
     }
 }

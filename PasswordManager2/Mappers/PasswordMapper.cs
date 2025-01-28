@@ -18,8 +18,7 @@ namespace PasswordManager2.Mappers
                 Title = dto.Title,
                 Username = dto.Username,
                 Password = dto.Password,
-                Website = dto.Website,
-                LastModified = dto.LastModified
+                Website = dto.Website
             };
         }
 
@@ -27,12 +26,21 @@ namespace PasswordManager2.Mappers
         {
             return new PasswordDto
             {
-                Id = entry.Id,
                 Title = entry.Title,
                 Username = entry.Username,
                 Password = entry.Password,
-                Website = entry.Website,
-                LastModified = entry.LastModified
+                Website = entry.Website
+            };
+        }
+
+        public static CreatePasswordDto ToCreatePasswordDto(this PasswordEntry entry)
+        {
+            return new CreatePasswordDto
+            {
+                Title = entry.Title,
+                Username = entry.Username,
+                Password = entry.Password,
+                Website = entry.Website
             };
         }
     }

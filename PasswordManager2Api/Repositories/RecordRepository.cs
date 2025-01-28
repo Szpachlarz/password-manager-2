@@ -21,7 +21,7 @@ namespace PasswordManager2Api.Repositories
                 AccountId = userId,
                 Title = recordDto.Title,
                 Username = recordDto.Username,
-                ServiceName = recordDto.ServiceName,
+                Website = recordDto.Website,
                 Password = recordDto.Password,
                 IV = recordDto.IV,
                 CreatedAt = DateTime.UtcNow,
@@ -65,7 +65,7 @@ namespace PasswordManager2Api.Repositories
                 return null;
             }
 
-            existingRecord.ServiceName = recordDto.ServiceName;
+            existingRecord.Website = recordDto.Website;
             existingRecord.Password = recordDto.Password;
             existingRecord.IV = recordDto.IV;
             existingRecord.UpdatedAt = DateTime.UtcNow;

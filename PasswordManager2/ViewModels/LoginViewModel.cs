@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
@@ -70,7 +71,8 @@ namespace PasswordManager2.ViewModels
                 IsLoading = true;
                 ErrorMessage = string.Empty;
                 await _authService.LoginAsync(Username, Password);
-                _regionManager.RequestNavigate("MainRegion", "Home"); ;
+                _regionManager.RequestNavigate("MainRegion", "UserPanelView");
+                ClearUserData();
             }
             catch (AuthenticationException ex)
             {
@@ -84,7 +86,14 @@ namespace PasswordManager2.ViewModels
 
         private void NavigateToRegister()
         {
-            _regionManager.RequestNavigate("MainRegion", "Register");
+            _regionManager.RequestNavigate("MainRegion", "RegisterView");
         }
+
+        private void ClearUserData()
+        {
+            Username = string.Empty;
+            Password = string.Empty;
+            ErrorMessage = string.Empty;
+        }        
     }
 }

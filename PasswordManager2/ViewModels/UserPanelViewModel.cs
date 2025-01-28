@@ -9,14 +9,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using PasswordManager2.Models.Password;
 
 namespace PasswordManager2.ViewModels
 {
-    internal class UserPanelViewModel : BindableBase
+    public class UserPanelViewModel : BindableBase, INavigationAware
     {
         private readonly IAuthService _authService;
         private readonly IPasswordService _passwordService;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IRegionManager _regionManager;
         private ObservableCollection<PasswordEntry> _passwords;
         private PasswordEntry _selectedPassword;
         private string _currentUsername;
@@ -26,11 +28,13 @@ namespace PasswordManager2.ViewModels
         public UserPanelViewModel(
             IAuthService authService,
             IPasswordService passwordService,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            IRegionManager regionManager)
         {
             _authService = authService;
             _passwordService = passwordService;
             _eventAggregator = eventAggregator;
+            _regionManager = regionManager;
 
             Passwords = new ObservableCollection<PasswordEntry>();
 
@@ -39,6 +43,7 @@ namespace PasswordManager2.ViewModels
             DeletePasswordCommand = new DelegateCommand(ExecuteDeletePassword, CanExecuteDeletePassword);
             RefreshCommand = new DelegateCommand(ExecuteRefresh);
             LogoutCommand = new DelegateCommand(ExecuteLogout);
+            CopyPasswordCommand = new DelegateCommand<PasswordEntry>(ExecuteCopyPassword);
 
             LoadUserDataAsync();
         }
@@ -83,6 +88,7 @@ namespace PasswordManager2.ViewModels
         public DelegateCommand DeletePasswordCommand { get; }
         public DelegateCommand RefreshCommand { get; }
         public DelegateCommand LogoutCommand { get; }
+        public DelegateCommand<PasswordEntry> CopyPasswordCommand { get; }
 
         private async void LoadUserDataAsync()
         {
@@ -114,20 +120,12 @@ namespace PasswordManager2.ViewModels
         {
             try
             {
-                var newPassword = new PasswordEntry
-                {
-                    Title = "New Password",
-                    Username = "",
-                    Password = "",
-                    Website = ""
-                };
-
-                var dialog = new PasswordDialog(newPassword);
+                var dialog = new PasswordDialog();
                 if (dialog.ShowDialog() == true)
                 {
-                    var passwordDto = newPassword.ToPasswordDto();
-                    await _passwordService.AddPasswordAsync(passwordDto);
-                    Passwords.Add(newPassword);
+                    await _passwordService.AddPasswordAsync(dialog.PasswordDto);
+
+                    LoadUserDataAsync();
                 }
             }
             catch (Exception ex)
@@ -142,16 +140,20 @@ namespace PasswordManager2.ViewModels
             {
                 if (SelectedPassword == null) return;
 
-                var passwordToEdit = SelectedPassword.Clone();
+                var passwordDto = new CreatePasswordDto
+                {
+                    Title = SelectedPassword.Title,
+                    Username = SelectedPassword.Username,
+                    Website = SelectedPassword.Website,
+                    Password = SelectedPassword.Password 
+                };
 
-                var dialog = new PasswordDialog(passwordToEdit);
+                var dialog = new PasswordDialog(passwordDto);
                 if (dialog.ShowDialog() == true)
                 {
-                    var passwordDto = passwordToEdit.ToPasswordDto();
-                    await _passwordService.UpdatePasswordAsync(passwordDto);
+                    await _passwordService.UpdatePasswordAsync(SelectedPassword.Id, dialog.PasswordDto);
 
-                    var index = Passwords.IndexOf(SelectedPassword);
-                    Passwords[index] = passwordToEdit;
+                    LoadUserDataAsync();
                 }
             }
             catch (Exception ex)
@@ -195,11 +197,31 @@ namespace PasswordManager2.ViewModels
             try
             {
                 await _authService.LogoutAsync();
-                _eventAggregator.GetEvent<LogoutEvent>().Publish();
+                ClearUserData();
+                _regionManager.RequestNavigate("MainRegion", "HomeView");
             }
             catch (Exception ex)
             {
                 ErrorMessage = "Failed to logout: " + ex.Message;
+            }
+        }
+
+        private async void ExecuteCopyPassword(PasswordEntry password)
+        {
+            try
+            {
+                if (password == null) return;
+
+                Clipboard.SetText(password.Password);
+
+                var originalError = ErrorMessage;
+                ErrorMessage = "Password copied to clipboard!";
+                await Task.Delay(2000);
+                ErrorMessage = originalError;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Failed to copy password: " + ex.Message;
             }
         }
 
@@ -212,5 +234,22 @@ namespace PasswordManager2.ViewModels
         {
             return SelectedPassword != null;
         }
+
+        private void ClearUserData()
+        {
+            CurrentUsername = null;
+            Passwords.Clear();
+            SelectedPassword = null;
+            ErrorMessage = string.Empty;
+        }
+
+        public async void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            LoadUserDataAsync();
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+        public void OnNavigatedFrom(NavigationContext navigationContext) { }
     }
 }

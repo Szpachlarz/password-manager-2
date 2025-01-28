@@ -79,7 +79,7 @@ namespace PasswordManager2.ViewModels
                 IsLoading = true;
                 ErrorMessage = string.Empty;
                 await _authService.RegisterAsync(Username, Password);
-                _regionManager.RequestNavigate("MainRegion", "Home");
+                _regionManager.RequestNavigate("MainRegion", "LoginView");
             }
             catch (AuthenticationException ex)
             {
@@ -93,7 +93,7 @@ namespace PasswordManager2.ViewModels
 
         private void NavigateToLogin()
         {
-            _regionManager.RequestNavigate("MainRegion", "Register");
+            _regionManager.RequestNavigate("MainRegion", "LoginView");
         }
     }
 }

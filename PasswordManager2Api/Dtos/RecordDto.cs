@@ -9,7 +9,7 @@ namespace PasswordManager2Api.Dtos
         [Required]
         public string Username { get; set; }
         [Required]
-        public string ServiceName { get; set; }
+        public string Website { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]

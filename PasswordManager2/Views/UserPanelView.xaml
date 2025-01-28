@@ -20,10 +20,10 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <TextBlock Text="Welcome, " />
+            <TextBlock Text="Witaj, " />
             <TextBlock Text="{Binding CurrentUsername}" FontWeight="Bold"/>
             <Button Command="{Binding LogoutCommand}" 
-                    Content="Logout" 
+                    Content="Wyloguj" 
                     Margin="20,0,0,0"/>
         </StackPanel>
 
@@ -40,14 +40,14 @@
                   IsReadOnly="True"
                   Margin="10">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Title" Binding="{Binding Title}"/>
-                <DataGridTextColumn Header="Username" Binding="{Binding Username}"/>
-                <DataGridTextColumn Header="Website" Binding="{Binding Website}"/>
-                <DataGridTextColumn Header="Last Modified" Binding="{Binding LastModified, StringFormat={}{0:g}}"/>
-                <DataGridTemplateColumn Header="Actions" Width="Auto">
+                <DataGridTextColumn Header="Tytuł" Binding="{Binding Title}"/>
+                <DataGridTextColumn Header="Nazwa użytkownika" Binding="{Binding Username}"/>
+                <DataGridTextColumn Header="Strona internetowa" Binding="{Binding Website}"/>
+                <DataGridTextColumn Header="Ostatnio zmodyfikowano" Binding="{Binding LastModified, StringFormat={}{0:g}}"/>
+                <DataGridTemplateColumn Header="" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Copy Password"
+                            <Button Content="Skopiuj hasło"
                             Command="{Binding DataContext.CopyPasswordCommand, 
                                       RelativeSource={RelativeSource AncestorType=DataGrid}}"
                             CommandParameter="{Binding}"
@@ -62,16 +62,14 @@
                     Orientation="Horizontal" 
                     Margin="10">
             <Button Command="{Binding AddPasswordCommand}"
-                    Content="Add Password"
+                    Content="Dodaj hasło"
                     Margin="0,0,10,0"/>
             <Button Command="{Binding EditPasswordCommand}"
-                    Content="Edit Password"
+                    Content="Edytuj hasło"
                     Margin="0,0,10,0"/>
             <Button Command="{Binding DeletePasswordCommand}"
-                    Content="Delete Password"
+                    Content="Usuń hasło"
                     Margin="0,0,10,0"/>
-            <Button Command="{Binding RefreshCommand}"
-                    Content="Refresh"/>
         </StackPanel>
 
         <Grid Grid.RowSpan="4" 

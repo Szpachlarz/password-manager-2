@@ -18,19 +18,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Login" 
+        <TextBlock Text="Zaloguj się" 
                  FontSize="24" 
                  FontWeight="Bold" 
                  Margin="0,0,0,20"/>
 
         <StackPanel Grid.Row="1" Margin="0,0,0,10">
-            <TextBlock Text="Username" Margin="0,0,0,5"/>
+            <TextBlock Text="Nazwa użytkownika" Margin="0,0,0,5"/>
             <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
                      Padding="5"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="0,0,0,20">
-            <TextBlock Text="Password" Margin="0,0,0,5"/>
+            <TextBlock Text="Hasło" Margin="0,0,0,5"/>
             <PasswordBox behaviors:PasswordBoxBehavior.Password="{Binding Password, Mode=TwoWay}"
                         Padding="5"/>
         </StackPanel>
@@ -44,12 +44,12 @@
 
         <StackPanel Grid.Row="4" Orientation="Horizontal">
             <Button Command="{Binding LoginCommand}"
-                    Content="Login"
+                    Content="Zaloguj"
                     Padding="20,10"
                     IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"/>
 
             <Button Command="{Binding NavigateToRegisterCommand}"
-                    Content="Register"
+                    Content="Przejdź do rejestracji"
                     Margin="10,0,0,0"
                     Padding="20,10"
                     Style="{StaticResource LinkButton}"/>

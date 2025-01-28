@@ -19,25 +19,25 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Register" 
+        <TextBlock Text="Rejestracja" 
                    FontSize="24" 
                    FontWeight="Bold" 
                    Margin="0,0,0,20"/>
 
         <StackPanel Grid.Row="1" Margin="0,0,0,10">
-            <TextBlock Text="Username" Margin="0,0,0,5"/>
+            <TextBlock Text="Nazwa użytkownika" Margin="0,0,0,5"/>
             <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
                      Padding="5"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="0,0,0,10">
-            <TextBlock Text="Password" Margin="0,0,0,5"/>
+            <TextBlock Text="Hasło" Margin="0,0,0,5"/>
             <PasswordBox behaviors:PasswordBoxBehavior.Password="{Binding Password, Mode=TwoWay}"
                         Padding="5"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Margin="0,0,0,20">
-            <TextBlock Text="Confirm Password" Margin="0,0,0,5"/>
+            <TextBlock Text="Powtórz hasło" Margin="0,0,0,5"/>
             <PasswordBox behaviors:PasswordBoxBehavior.Password="{Binding ConfirmPassword, Mode=TwoWay}"
                         Padding="5"/>
         </StackPanel>
@@ -51,12 +51,12 @@
 
         <StackPanel Grid.Row="5" Orientation="Horizontal">
             <Button Command="{Binding RegisterCommand}"
-                    Content="Register"
+                    Content="Zarejestruj"
                     Padding="20,10"
                     IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"/>
 
             <Button Command="{Binding NavigateToLoginCommand}"
-                    Content="Back to Login"
+                    Content="Przejdź do logowania"
                     Margin="10,0,0,0"
                     Padding="20,10"
                     Style="{StaticResource LinkButton}"/>

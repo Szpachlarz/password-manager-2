@@ -19,6 +19,8 @@ namespace PasswordManager2Api.Repositories
             var record = new Record
             {
                 AccountId = userId,
+                Title = recordDto.Title,
+                Username = recordDto.Username,
                 ServiceName = recordDto.ServiceName,
                 Password = recordDto.Password,
                 IV = recordDto.IV,

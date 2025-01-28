@@ -12,7 +12,7 @@ namespace PasswordManager2.Interfaces
         Task<List<PasswordDto>> GetPasswordsAsync();
         Task<PasswordDto> GetPasswordByIdAsync(int id);
         Task<PasswordDto> AddPasswordAsync(CreatePasswordDto password);
-        Task<PasswordDto> UpdatePasswordAsync(int id, CreatePasswordDto password);
+        Task UpdatePasswordAsync(int id, CreatePasswordDto password);
         Task<bool> DeletePasswordAsync(int id);
     }
 }

@@ -96,15 +96,22 @@ namespace PasswordManager2.Services
             }
         }
 
-        public async Task<PasswordDto> UpdatePasswordAsync(int id, CreatePasswordDto password)
+        public async Task UpdatePasswordAsync(int id, CreatePasswordDto password)
         {
             try
             {
+                var (encryptedPassword, iv) = _aesHelper.Encrypt(password.Password);
+                password.Password = encryptedPassword;
+                password.IV = iv;
+
                 var response = await _httpClient.PutAsJsonAsync($"Record/{id}", password);
                 response.EnsureSuccessStatusCode();
 
-                var updatedPassword = await response.Content.ReadFromJsonAsync<PasswordDto>();
-                return updatedPassword ?? throw new Exception("Failed to update password");
+                var updatedPassword = await response.Content.ReadFromJsonAsync<CreatePasswordDto>();
+                if (updatedPassword == null)
+                {
+                    throw new Exception("Failed to update password");
+                }
             }
             catch (Exception ex)
             {

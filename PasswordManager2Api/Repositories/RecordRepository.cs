@@ -66,6 +66,7 @@ namespace PasswordManager2Api.Repositories
             }
 
             existingRecord.Website = recordDto.Website;
+            existingRecord.Username = recordDto.Username;
             existingRecord.Password = recordDto.Password;
             existingRecord.IV = recordDto.IV;
             existingRecord.UpdatedAt = DateTime.UtcNow;

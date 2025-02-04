@@ -32,7 +32,7 @@ namespace PasswordManager2Api.Controllers
             var user = await _accountRepository.GetByUsernameAsync(request.Username);
             if (user == null)
             {
-                return Unauthorized("User not found");
+                return Unauthorized("Nie znaleziono użytkownika.");
             }
 
             var result = await _accountService.ValidateUserAsync(request.Username, request.Password);
@@ -56,7 +56,7 @@ namespace PasswordManager2Api.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            return Ok(new { message = "Login successful" });
+            return Ok(new { message = "Zalogowano." });
         }
 
         [HttpPost("register")]
@@ -83,7 +83,7 @@ namespace PasswordManager2Api.Controllers
         {
             if (User?.Identity == null || !User.Identity.IsAuthenticated)
             {
-                return Unauthorized(new { message = "User not found or not authenticated" });
+                return Unauthorized(new { message = "Użytkownik nie istnieje lub nie jest zalogowany." });
             }
             var username = User.Identity.Name;
             var user = await _accountRepository.GetByUsernameAsync(username);

@@ -19,13 +19,13 @@ namespace PasswordManager2Api.Services
         {
             var user = await _accountRepository.GetByUsernameAsync(username);
             if (user == null)
-                return new ServiceResult(false, "Invalid username or password.");
+                return new ServiceResult(false, "Nieprawidłowy login lub hasło.");
 
             var hashedPassword = HashPassword(password, user.Salt);
             if (hashedPassword != user.PasswordHash)
-                return new ServiceResult(false, "Invalid username or password.");
+                return new ServiceResult(false, "Nieprawidłowy login lub hasło.");
 
-            return new ServiceResult(true, "Login successful.");
+            return new ServiceResult(true, "Zalogowano.");
         }
 
         //public async Task<Account> GetUserByIdAsync(string userId)
@@ -38,7 +38,7 @@ namespace PasswordManager2Api.Services
             var existingUser = await _accountRepository.GetByUsernameAsync(username);
             if (existingUser != null)
             {
-                return new ServiceResult(false, "Username already exists.");
+                return new ServiceResult(false, "Użytkownik już istnieje.");
             }
 
             var salt = GenerateSalt();
@@ -52,7 +52,7 @@ namespace PasswordManager2Api.Services
 
             await _accountRepository.CreateAsync(user);
 
-            return new ServiceResult(true, "User registered successfully.");
+            return new ServiceResult(true, "Zarejestrowano.");
         }
 
         private string GenerateSalt()

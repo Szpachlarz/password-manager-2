@@ -1,7 +1,9 @@
-﻿using PasswordManager2.ViewModels;
+﻿using PasswordManager2.Models.Password;
+using PasswordManager2.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,23 +22,54 @@ namespace PasswordManager2.Views
     /// </summary>
     public partial class PasswordDialog : Window
     {
-        public PasswordEntry PasswordEntry { get; private set; }
+        private readonly Random _random = new Random();
+        private const string PasswordChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
 
-        public PasswordDialog(PasswordEntry passwordEntry)
+        public CreatePasswordDto PasswordDto { get; private set; }
+
+        public PasswordDialog(CreatePasswordDto existingPassword = null)
         {
             InitializeComponent();
+            Owner = Application.Current.MainWindow;
 
-            PasswordEntry = passwordEntry.Clone();
-            DataContext = PasswordEntry;
+            if (existingPassword != null)
+            {
+                TitleTextBox.Text = existingPassword.Title;
+                UsernameTextBox.Text = existingPassword.Username;
+                WebsiteTextBox.Text = existingPassword.Website;
+                PasswordBox.Password = existingPassword.Password;
+            }
         }
 
-        private void OkButton_Click(object sender, RoutedEventArgs e)
+        private void GeneratePassword_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(PasswordEntry.Title))
+            var password = new StringBuilder();
+            for (int i = 0; i < 16; i++)
             {
-                MessageBox.Show("Title is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                password.Append(PasswordChars[_random.Next(PasswordChars.Length)]);
+            }
+            PasswordBox.Password = password.ToString();
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(TitleTextBox.Text) ||
+                string.IsNullOrWhiteSpace(UsernameTextBox.Text) ||
+                string.IsNullOrWhiteSpace(PasswordBox.Password))
+            {
+                MessageBox.Show("Please fill in all required fields.", "Validation Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+
+            PasswordDto = new CreatePasswordDto
+            {
+                Title = TitleTextBox.Text.Trim(),
+                Username = UsernameTextBox.Text.Trim(),
+                Website = WebsiteTextBox.Text.Trim(),
+                Password = PasswordBox.Password,
+                IV = Convert.ToBase64String(GenerateIV())
+            };
 
             DialogResult = true;
             Close();
@@ -48,11 +81,13 @@ namespace PasswordManager2.Views
             Close();
         }
 
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        private byte[] GenerateIV()
         {
-            if (DataContext != null)
+            using (var rng = new RNGCryptoServiceProvider())
             {
-                ((PasswordEntry)DataContext).Password = PasswordBox.Password;
+                byte[] iv = new byte[16];
+                rng.GetBytes(iv);
+                return iv;
             }
         }
     }

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PasswordManager2.View
+namespace PasswordManager2.Views
 {
     /// <summary>
     /// Interaction logic for UserPanelView.xaml

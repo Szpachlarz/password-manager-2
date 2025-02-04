@@ -86,7 +86,7 @@ namespace PasswordManager2Api.Controllers
                 return Unauthorized(new { message = "User not found or not authenticated" });
             }
             var username = User.Identity.Name;
-            var user = await _accountRepository.GetByIdAsync(username);
+            var user = await _accountRepository.GetByUsernameAsync(username);
             return Ok(new { username = username, id = user.Id });
         }
     }

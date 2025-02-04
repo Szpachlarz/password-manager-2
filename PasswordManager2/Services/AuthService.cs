@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Authentication;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PasswordManager2.Services
@@ -23,21 +24,9 @@ namespace PasswordManager2.Services
 
         public bool IsAuthenticated => _isAuthenticated;
 
-        public AuthService(IConfiguration configuration)
+        public AuthService(IConfiguration configuration, HttpClient httpClient)
         {
-            _baseUrl = configuration["ApiSettings:BaseUrl"];
-            _cookieContainer = new CookieContainer();
-
-            var handler = new HttpClientHandler
-            {
-                CookieContainer = _cookieContainer,
-                UseCookies = true
-            };
-
-            _httpClient = new HttpClient(handler)
-            {
-                BaseAddress = new Uri(_baseUrl)
-            };
+            _httpClient = httpClient;
         }
 
         public async Task<bool> LoginAsync(string username, string password)
@@ -82,7 +71,6 @@ namespace PasswordManager2.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
                     return true;
                 }
 
@@ -91,6 +79,7 @@ namespace PasswordManager2.Services
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Exception: {ex.Message}");
                 throw new AuthenticationException("Registration failed", ex);
             }
         }
@@ -121,8 +110,11 @@ namespace PasswordManager2.Services
                 var response = await _httpClient.GetAsync("authentication/me");
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<dynamic>();
-                    return result.username;
+                    var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+                    if (result.TryGetProperty("username", out var usernameElement))
+                    {
+                        return usernameElement.GetString();
+                    }
                 }
 
                 _isAuthenticated = false;

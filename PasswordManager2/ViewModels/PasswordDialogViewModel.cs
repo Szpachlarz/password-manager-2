@@ -7,81 +7,62 @@ using System.Threading.Tasks;
 
 namespace PasswordManager2.ViewModels
 {
-    public class PasswordEntry : INotifyPropertyChanged
+    public class PasswordDialogViewModel : INotifyPropertyChanged
     {
-        private int _id;
-        private string _title;
-        private string _username;
-        private string _password;
-        private string _website;
+        private PasswordEntry _passwordEntry;
 
-        public int Id
+        public PasswordDialogViewModel(PasswordEntry passwordEntry)
         {
-            get => _id;
-            set
-            {
-                _id = value;
-                OnPropertyChanged(nameof(Id));
-            }
+            _passwordEntry = passwordEntry.Clone();
         }
 
         public string Title
         {
-            get => _title;
+            get => _passwordEntry.Title;
             set
             {
-                _title = value;
+                _passwordEntry.Title = value;
                 OnPropertyChanged(nameof(Title));
             }
         }
 
         public string Username
         {
-            get => _username;
+            get => _passwordEntry.Username;
             set
             {
-                _username = value;
+                _passwordEntry.Username = value;
                 OnPropertyChanged(nameof(Username));
             }
         }
 
         public string Password
         {
-            get => _password;
+            get => _passwordEntry.Password;
             set
             {
-                _password = value;
+                _passwordEntry.Password = value;
                 OnPropertyChanged(nameof(Password));
             }
         }
 
         public string Website
         {
-            get => _website;
+            get => _passwordEntry.Website;
             set
             {
-                _website = value;
+                _passwordEntry.Website = value;
                 OnPropertyChanged(nameof(Website));
             }
         }
+
+        public PasswordEntry GetPasswordEntry() => _passwordEntry;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public PasswordEntry Clone()
-        {
-            return new PasswordEntry
-            {
-                Id = _id,
-                Title = this.Title,
-                Username = this.Username,
-                Password = this.Password,
-                Website = this.Website
-            };
         }
     }
 }

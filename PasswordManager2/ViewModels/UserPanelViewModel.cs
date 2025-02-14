@@ -169,8 +169,8 @@ namespace PasswordManager2.ViewModels
                 if (SelectedPassword == null) return;
 
                 var result = MessageBox.Show(
-                    "Are you sure you want to delete this password?",
-                    "Confirm Delete",
+                    "Czy na pewno chcesz usunąć to hasło?",
+                    "Usuń",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question
                 );
@@ -215,7 +215,7 @@ namespace PasswordManager2.ViewModels
                 Clipboard.SetText(password.Password);
 
                 var originalError = ErrorMessage;
-                ErrorMessage = "Password copied to clipboard!";
+                ErrorMessage = "Hasło skopiowane do schowka";
                 await Task.Delay(2000);
                 ErrorMessage = originalError;
             }

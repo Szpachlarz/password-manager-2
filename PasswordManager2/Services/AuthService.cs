@@ -29,7 +29,7 @@ namespace PasswordManager2.Services
             _httpClient = httpClient;
         }
 
-        public async Task<bool> LoginAsync(string username, string password)
+        public async Task<LoginResult> LoginAsync(string username, string password)
         {
             try
             {
@@ -44,20 +44,29 @@ namespace PasswordManager2.Services
                 if (response.IsSuccessStatusCode)
                 {
                     _isAuthenticated = true;
-                    return true;
+                    return new LoginResult { Success = true };
                 }
 
-                var error = await response.Content.ReadFromJsonAsync<AuthResponse>();
-                throw new Exception(error?.Message ?? "Login failed");
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                _isAuthenticated = false;
+                return new LoginResult
+                {
+                    Success = false,
+                    Message = errorMessage ?? "Login failed"
+                };
             }
             catch (Exception ex)
             {
                 _isAuthenticated = false;
-                throw new AuthenticationException("Login failed", ex);
+                return new LoginResult
+                {
+                    Success = false,
+                    Message = "Unable to connect to the server. Please check your connection."
+                };
             }
         }
 
-        public async Task<bool> RegisterAsync(string username, string password)
+        public async Task<RegisterResult> RegisterAsync(string username, string password)
         {
             try
             {
@@ -71,16 +80,23 @@ namespace PasswordManager2.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return true;
+                    return new RegisterResult { Success = true };
                 }
 
-                var error = await response.Content.ReadFromJsonAsync<AuthResponse>();
-                throw new Exception(error?.Message ?? "Registration failed");
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                return new RegisterResult
+                {
+                    Success = false,
+                    Message = errorMessage ?? "Register failed"
+                };
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception: {ex.Message}");
-                throw new AuthenticationException("Registration failed", ex);
+                return new RegisterResult
+                {
+                    Success = false,
+                    Message = "Unable to connect to the server. Please check your connection."
+                };
             }
         }
 

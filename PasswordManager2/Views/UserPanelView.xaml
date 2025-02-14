@@ -20,17 +20,19 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <TextBlock Text="Witaj, " />
-            <TextBlock Text="{Binding CurrentUsername}" FontWeight="Bold"/>
+            <TextBlock Text="Witaj, " FontSize="18"/>
+            <TextBlock Text="{Binding CurrentUsername}" FontWeight="Bold" FontSize="18"/>
             <Button Command="{Binding LogoutCommand}" 
                     Content="Wyloguj" 
-                    Margin="20,0,0,0"/>
+                    Margin="20,0,0,0"
+                    FontSize="16"/>
         </StackPanel>
 
         <TextBlock Grid.Row="1" 
                    Text="{Binding ErrorMessage}"
                    Foreground="Red"
                    Margin="10"
+                   FontSize="16"
                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
 
         <DataGrid Grid.Row="2"
@@ -38,20 +40,22 @@
                   SelectedItem="{Binding SelectedPassword}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
-                  Margin="10">
+                  Margin="10"
+                  FontSize="16">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Tytuł" Binding="{Binding Title}"/>
-                <DataGridTextColumn Header="Nazwa użytkownika" Binding="{Binding Username}"/>
-                <DataGridTextColumn Header="Strona internetowa" Binding="{Binding Website}"/>
-                <DataGridTextColumn Header="Ostatnio zmodyfikowano" Binding="{Binding LastModified, StringFormat={}{0:g}}"/>
+                <DataGridTextColumn Header="Tytuł" Binding="{Binding Title}" Width="150"/>
+                <DataGridTextColumn Header="Nazwa użytkownika" Binding="{Binding Username}" Width="150"/>
+                <DataGridTextColumn Header="Strona internetowa" Binding="{Binding Website}" Width="200"/>
+                <!--<DataGridTextColumn Header="Ostatnio zmodyfikowano" Binding="{Binding LastModified, StringFormat={}{0:g}}"/>-->
                 <DataGridTemplateColumn Header="" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Skopiuj hasło"
-                            Command="{Binding DataContext.CopyPasswordCommand, 
-                                      RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                            CommandParameter="{Binding}"
-                            Padding="5,2"/>
+                                    Command="{Binding DataContext.CopyPasswordCommand, 
+                                                RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}"
+                                    Padding="5,2"
+                                    FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -63,21 +67,24 @@
                     Margin="10">
             <Button Command="{Binding AddPasswordCommand}"
                     Content="Dodaj hasło"
-                    Margin="0,0,10,0"/>
+                    Margin="0,0,10,0"
+                    FontSize="16"/>
             <Button Command="{Binding EditPasswordCommand}"
                     Content="Edytuj hasło"
-                    Margin="0,0,10,0"/>
+                    Margin="0,0,10,0"
+                    FontSize="16"/>
             <Button Command="{Binding DeletePasswordCommand}"
                     Content="Usuń hasło"
-                    Margin="0,0,10,0"/>
+                    Margin="0,0,10,0"
+                    FontSize="16"/>
         </StackPanel>
 
         <Grid Grid.RowSpan="4" 
               Background="#80000000"
               Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ProgressBar IsIndeterminate="True" 
-                        Width="100" 
-                        Height="20"/>
+                         Width="100" 
+                         Height="20"/>
         </Grid>
     </Grid>
 </UserControl>

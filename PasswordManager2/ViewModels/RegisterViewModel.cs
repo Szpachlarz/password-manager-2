@@ -66,8 +66,19 @@ namespace PasswordManager2.ViewModels
 
         private bool CanExecuteRegister()
         {
+            bool isPasswordValid = IsPasswordValid(Password);
+
+            if (!isPasswordValid && !string.IsNullOrEmpty(Password))
+            {
+                ErrorMessage = "Hasło musi mieć co najmniej osiem znaków, cyfry i znaki specjalne.";
+            }
+            else
+            {
+                ErrorMessage = string.Empty;
+            }
+
             return !string.IsNullOrWhiteSpace(Username) &&
-                   !string.IsNullOrWhiteSpace(Password) &&
+                   isPasswordValid &&
                    Password == ConfirmPassword &&
                    !IsLoading;
         }
@@ -78,8 +89,24 @@ namespace PasswordManager2.ViewModels
             {
                 IsLoading = true;
                 ErrorMessage = string.Empty;
-                await _authService.RegisterAsync(Username, Password);
-                _regionManager.RequestNavigate("MainRegion", "LoginView");
+
+                if (!IsPasswordValid(Password))
+                {
+                    ErrorMessage = "Hasło musi mieć co najmniej osiem znaków, cyfry i znaki specjalne.";
+                    return;
+                }
+
+                var result = await _authService.RegisterAsync(Username, Password);
+
+                if (result.Success)
+                {
+                    _regionManager.RequestNavigate("MainRegion", "LoginView");
+                    ClearUserData();
+                }
+                else
+                {
+                    ErrorMessage = result.Message;
+                }
             }
             catch (AuthenticationException ex)
             {
@@ -91,9 +118,30 @@ namespace PasswordManager2.ViewModels
             }
         }
 
+        private bool IsPasswordValid(string password)
+        {
+            if (string.IsNullOrEmpty(password) || password.Length < 8)
+                return false;
+
+            bool hasNumber = password.Any(char.IsDigit);
+            bool hasLetter = password.Any(char.IsLetter);
+            bool hasSpecial = password.Any(c => !char.IsLetterOrDigit(c));
+
+            return hasNumber && hasLetter && hasSpecial;
+        }
+
         private void NavigateToLogin()
         {
             _regionManager.RequestNavigate("MainRegion", "LoginView");
+            ClearUserData();
+        }
+
+        private void ClearUserData()
+        {
+            Username = string.Empty;
+            Password = string.Empty;
+            ConfirmPassword = string.Empty;
+            ErrorMessage = string.Empty;
         }
     }
 }

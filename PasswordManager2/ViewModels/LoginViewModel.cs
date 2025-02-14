@@ -70,11 +70,19 @@ namespace PasswordManager2.ViewModels
             {
                 IsLoading = true;
                 ErrorMessage = string.Empty;
-                await _authService.LoginAsync(Username, Password);
-                _regionManager.RequestNavigate("MainRegion", "UserPanelView");
-                ClearUserData();
+                var result = await _authService.LoginAsync(Username, Password);
+                if(result.Success)
+                {
+                    _regionManager.RequestNavigate("MainRegion", "UserPanelView");
+                    ClearUserData();
+                }
+                else
+                {
+                    ErrorMessage = result.Message;
+                }
+                
             }
-            catch (AuthenticationException ex)
+            catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
             }

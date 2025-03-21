@@ -23,7 +23,6 @@ namespace PasswordManager2.Views
     public partial class PasswordDialog : Window
     {
         private readonly Random _random = new Random();
-        private const string PasswordChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
 
         public CreatePasswordDto PasswordDto { get; private set; }
 
@@ -43,10 +42,19 @@ namespace PasswordManager2.Views
 
         private void GeneratePassword_Click(object sender, RoutedEventArgs e)
         {
-            var password = new StringBuilder();
-            for (int i = 0; i < 16; i++)
+            int passwordLength = (int)PasswordLengthSlider.Value;
+            bool includeSpecialCharacters = IncludeSpecialCharactersCheckBox.IsChecked ?? false;
+
+            string charSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            if (includeSpecialCharacters)
             {
-                password.Append(PasswordChars[_random.Next(PasswordChars.Length)]);
+                charSet += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+            }
+
+            var password = new StringBuilder(passwordLength);
+            for (int i = 0; i < passwordLength; i++)
+            {
+                password.Append(charSet[_random.Next(charSet.Length)]);
             }
             PasswordBox.Password = password.ToString();
         }
